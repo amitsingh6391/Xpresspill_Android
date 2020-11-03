@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "636207395226",
+    "firebase_url": "https://xpresspill-55ab6.firebaseio.com",
+    "project_id": "xpresspill-55ab6",
+    "storage_bucket": "xpresspill-55ab6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636207395226:android:aec1c9dbc8f1397050ca23",
+        "android_client_info": {
+          "package_name": "com.example.my_xpresspill"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "636207395226-vlmd9ks4jirneupj24f3qeg321e2uiv0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI4PbkO69hdxUzdCII1Es9bmTI_KGtXQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "636207395226-vlmd9ks4jirneupj24f3qeg321e2uiv0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
