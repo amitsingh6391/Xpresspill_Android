@@ -13,7 +13,7 @@ final productsRef = FirebaseFirestore.instance.collection('products');
 final prescriptionsRef = FirebaseFirestore.instance.collection('prescriptions');
 final prescriptionTransfersRef =
     FirebaseFirestore.instance.collection("prescriptionTransfers");
-
+final carditemRef = FirebaseFirestore.instance.collection("cart");
 
 final StorageReference storageRef = FirebaseStorage.instance.ref();
 

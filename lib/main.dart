@@ -1,5 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:my_xpresspill/constants.dart';
 import 'package:my_xpresspill/pages/home.dart';
 import 'package:my_xpresspill/pages/login.dart';
 import 'package:my_xpresspill/pages/pharmacistHome.dart';
@@ -63,6 +64,8 @@ class MyApp extends StatelessWidget {
         '/usercart': (context) => UserCartScreen()
       },
       theme: ThemeData(
+          
+         
           bottomSheetTheme:
               BottomSheetThemeData(backgroundColor: Colors.white)),
     );

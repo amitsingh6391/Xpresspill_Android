@@ -8,3 +8,5 @@ const redColor=Colors.red;
 
 const white=Colors.white;
 const primaryFontFamily="Montserrat";
+
+//Style textStyle = TextStyle(font)

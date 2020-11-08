@@ -12,7 +12,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   HashMap userValues = new HashMap<String, String>();
@@ -21,57 +20,45 @@ class _LoginState extends State<Login> {
 
   ValidateService _validateService = ValidateService();
   UserService _userService = UserService();
-
-  login() async{
-    if(this._formKey.currentState.validate()){
+ 
+  login() async {  //loginfunction will be invoked when user will be provide their correct passwprd and email
+    if (this._formKey.currentState.validate()) {   //otherwise according to statuscode we will show thm=em errors.
       _formKey.currentState.save();
       Loader.showLoadingScreen(context, _keyLoader);
       await _userService.login(userValues);
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       int statusCode = _userService.statusCode;
 
-      print("-----------------${_userService.currentUserDetails.firstName}");
-
-      if(statusCode == 200 ){
-        if(_userService.currentUserDetails.isPharmacist)
-          {
-            Navigator.pushReplacementNamed(context, '/pharmacisthome');
-          }
-        else if(_userService.currentUserDetails.isAdmin)
-          {
-            Navigator.pushReplacementNamed(context, '/home');
-          }
-        else if(!_userService.currentUserDetails.isAdmin && !_userService.currentUserDetails.isPharmacist)
-        Navigator.pushReplacementNamed(context, '/userhome');
-      }
-      else{
+      if (statusCode == 200) {
+        if (_userService.currentUserDetails.isPharmacist) {     //here we will navigate user according to
+          Navigator.pushReplacementNamed(context, '/pharmacisthome');  //their status.
+        } else if (_userService.currentUserDetails.isAdmin) {
+          Navigator.pushReplacementNamed(context, '/home');
+        } else if (!_userService.currentUserDetails.isAdmin &&
+            !_userService.currentUserDetails.isPharmacist)
+          Navigator.pushReplacementNamed(context, '/userhome');
+      } else {
         AlertBox alertBox = AlertBox(_userService.msg);
         return showDialog(
             context: context,
-            builder: (BuildContext context){
+            builder: (BuildContext context) {
               return alertBox.build(context);
-            }
-        );
+            });
       }
-    }
-    else{
+    } else {
       setState(() {
         _autoValidate = true;
       });
     }
   }
 
-  setBorder(double width, Color color){
+  setBorder(double width, Color color) {
     return OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(30.0)),
-        borderSide: BorderSide(
-            width: width,
-            color: color
-        )
-    );
+        borderSide: BorderSide(width: width, color: color));
   }
 
-  InputDecoration customFormField(String hintText){
+  InputDecoration customFormField(String hintText) {
     return InputDecoration(
         hintText: hintText,
         contentPadding: EdgeInsets.all(20.0),
@@ -79,23 +66,18 @@ class _LoginState extends State<Login> {
         errorBorder: this.setBorder(borderWidth, Colors.red),
         focusedErrorBorder: this.setBorder(borderWidth, Colors.red),
         focusedBorder: this.setBorder(borderWidth, primaryColor),
-        enabledBorder: this.setBorder(borderWidth, primaryColor)
-    );
+        enabledBorder: this.setBorder(borderWidth, primaryColor));
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
-            onPressed: () => Navigator.popAndPushNamed(context, '/')
-        ),
-        iconTheme: IconThemeData(
-            color: primaryColor
-        ),
+            onPressed: () => Navigator.popAndPushNamed(context, '/')),
+        iconTheme: IconThemeData(color: primaryColor),
         backgroundColor: Colors.white,
         elevation: 0.0,
       ),
@@ -103,7 +85,7 @@ class _LoginState extends State<Login> {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 15.0),
           child: Form(
-            key: _formKey,
+            key: _formKey,           //we define our form key for login validation...
             autovalidate: _autoValidate,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -114,38 +96,36 @@ class _LoginState extends State<Login> {
                   style: TextStyle(
                       fontSize: 40.0,
                       fontWeight: FontWeight.bold,
-                      fontFamily: primaryFontFamily
-                  ),
+                      fontFamily: primaryFontFamily),
                 ),
                 SizedBox(height: 50.0),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 0.0, horizontal: 20.0),
                   child: Column(
                     children: <Widget>[
                       TextFormField(
-                        decoration: customFormField('E-mail or Mobile number'),
-                        validator: (value)=> _validateService.isEmptyField(value),
+                        decoration: customFormField('E-mail '),
+                        validator: (value) =>
+                            _validateService.isEmptyField(value),
                         keyboardType: TextInputType.emailAddress,
-                        onSaved: (String val){
+                        onSaved: (String val) {
                           userValues['email'] = val;
                         },
                         style: TextStyle(
-                            fontSize: 17.0,
-                          fontFamily: primaryFontFamily
-                        ),
+                            fontSize: 17.0, fontFamily: primaryFontFamily),
                       ),
                       SizedBox(height: 30.0),
                       TextFormField(
                         obscureText: true,
                         decoration: customFormField('Password'),
-                        validator: (value) => _validateService.isEmptyField(value),
-                        onSaved: (String val){
+                        validator: (value) =>
+                            _validateService.isEmptyField(value),
+                        onSaved: (String val) {
                           userValues['password'] = val;
                         },
                         style: TextStyle(
-                            fontSize: 17.0,
-                            fontFamily: primaryFontFamily
-                        ),
+                            fontSize: 17.0, fontFamily: primaryFontFamily),
                       ),
                       SizedBox(height: 30.0),
                       Center(
@@ -156,8 +136,7 @@ class _LoginState extends State<Login> {
                               child: FlatButton(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(36),
-                                    side: BorderSide(color: primaryColor)
-                                ),
+                                    side: BorderSide(color: primaryColor)),
                                 padding: EdgeInsets.symmetric(vertical: 20.0),
                                 color: primaryColor,
                                 textColor: Colors.white,
@@ -166,8 +145,7 @@ class _LoginState extends State<Login> {
                                   style: TextStyle(
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold,
-                                    fontFamily: primaryFontFamily
-                                  ),
+                                      fontFamily: primaryFontFamily),
                                 ),
                                 onPressed: () {
                                   this.login();

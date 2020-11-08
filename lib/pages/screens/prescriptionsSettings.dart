@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:my_xpresspill/constants.dart';
 import 'package:my_xpresspill/widgets/drawer.dart';
-
+import "package:my_xpresspill/pages/screens/userorders.dart";
 
 TextStyle defaultStyle()
 {
@@ -58,6 +58,16 @@ class _PrescriptionsSettingsState extends State<PrescriptionsSettings> {
                 Navigator.of(context).pushNamed('/lockedrequests');
               },
             ),
+
+            ListTile(
+              leading: Icon(Icons.shopping_cart),
+              title: Text("Product Orders",style: defaultStyle(),),
+              onTap: (){
+                Navigator.push(context,MaterialPageRoute(builder:(context)=>Productorders()));
+              },
+            ),
+
+
           ],
         )
       ),

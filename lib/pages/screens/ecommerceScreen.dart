@@ -8,8 +8,13 @@ import 'package:my_xpresspill/pages/home.dart';
 import 'package:my_xpresspill/services/userService.dart';
 import 'package:my_xpresspill/widgets/drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import "package:my_xpresspill/pages/screens/userCartScreen.dart";
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 var prev_quant, prev_price;
+String currentUserId;
+var no;    //number of item in cart;
 
 TextStyle defaultStyle() {
   return TextStyle(
@@ -26,13 +31,27 @@ class _EcommerceScreenState extends State<EcommerceScreen> {
   Stream<QuerySnapshot> allProducts;
   UserService userService = UserService();
 
+ 
+
   @override
   void initState() {
-    super.initState();
+    getnumberofcartitem();
+   super.initState();
     var products = productsRef.snapshots();
     setState(() {
       allProducts = products;
     });
+  }
+
+
+  getnumberofcartitem() async{
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                  no = sharedPreferences.getInt('cartno');
+
+                setState((){
+no = sharedPreferences.getInt('cartno');
+                });
+
   }
 
   StreamBuilder buildProductResults() {
@@ -66,26 +85,69 @@ class _EcommerceScreenState extends State<EcommerceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Buy Products",
+         "Buy Products",
           style: defaultStyle(),
         ),
         backgroundColor: primaryColor,
         centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: IconButton(
-              icon: Icon(
-                AntDesign.shoppingcart,
-                size: 30,
-              ),
-              color: primaryColor2,
-              onPressed: () {
-                Navigator.of(context).pushNamed("/usercart");
-              },
+       
+
+
+
+
+
+        actions: <Widget>[
+
+      new Padding(padding: const EdgeInsets.all(10.0),
+
+        child: new Container(
+          height: 150.0,
+          width: 30.0,
+          child: new GestureDetector(
+            onTap: () {
+                     Navigator.push(context,MaterialPageRoute(builder:(context)=>
+               UserCartScreen(currentuserid:currentUserId)));
+            },
+
+            child: new Stack(
+
+              children: <Widget>[
+                new IconButton(icon: new Icon(Icons.shopping_cart,
+                  color: Colors.white,),
+                    onPressed: null,
+                ),
+                no == null ? new Container() :
+                new Positioned(
+
+                    child: new Stack(
+                      children: <Widget>[
+                        new Icon(
+                            Icons.brightness_1,
+                            size: 20.0, color: Colors.green[800]),
+                        new Positioned(
+                            top: 3.0,
+                            right: 4.0,
+                            child: new Center(
+                              child: new Text(
+                                no.toString(),
+                                style: new TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11.0,
+                                    fontWeight: FontWeight.w500
+                                ),
+                              ),
+                            )),
+
+
+                      ],
+                    )),
+
+              ],
             ),
           )
-        ],
+        )
+
+        ,)],
       ),
       body: allProducts == null
           ? Center(child: CircularProgressIndicator())
@@ -115,8 +177,8 @@ class _UserProductResultState extends State<UserProductResult> {
   final Product product;
 
   _UserProductResultState(this.product);
-  String currentUserId;
-
+  
+ 
   @override
   void initState() {
     _getCurrentUserId();
@@ -131,21 +193,31 @@ class _UserProductResultState extends State<UserProductResult> {
     });
   }
 
-  // additem(String quant) async {
-  //   await FirebaseFirestore.instance
-  //       .collection("cart")
-  //       .doc(currentUserId)
-  //       .collection("items")
-  //       .doc(product.productId)
-  //       .set({
-  //     "itemname": product.productName,
-  //     "itemprice": product.productPrice,
-  //     "itemQuantity": 1,
-  //     "itemUrl": product.mediaUrl
-  //   });
+  additem() async {    //additem function will be invoked when user want to add item in their cart
+    await FirebaseFirestore.instance
+        .collection("cart")
+        .doc(currentUserId)
+        .collection("items")
+        .doc(product.productId)
+        .set({
+      "itemname": product.productName,
+      "itemprice": product.productPrice,
+      "itemQuantity": 1,
+      "itemUrl": product.mediaUrl,
+      "productid":product.productId,
+      "isSubmit":false
+    });
 
-  //   print("ok i add this product in cart");
-  // }
+    print("ok i add this product in cart");
+
+    Fluttertoast.showToast(
+          msg: "Your Item is add in Cart",
+          fontSize: 15,
+          backgroundColor: Colors.black,
+          toastLength: Toast.LENGTH_LONG,
+          textColor: Colors.white,
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,36 +227,6 @@ class _UserProductResultState extends State<UserProductResult> {
       child: Card(
         child: Column(
           children: <Widget>[
-            // FutureBuilder(
-            //     future: FirebaseFirestore.instance
-            //         .collection("cart")
-            //         .doc(currentUserId)
-            //         .collection("items")
-            //         .doc(product.productId)
-            //         .get(),
-            //     builder: (context, snapshot) {
-            //       if (snapshot.hasError) {
-            //         return Padding(
-            //           padding: const EdgeInsets.all(8.0),
-            //           child: Text("Connection failed."),
-            //         );
-            //       }
-            //       if (snapshot.connectionState == ConnectionState.waiting) {
-            //         return Padding(
-            //           padding: const EdgeInsets.all(8.0),
-            //           child: LinearProgressIndicator(),
-            //         );
-            //       }
-            //       if (snapshot.hasData) {
-
-            //         prev_quant = snapshot.data.
-            //        return Container(
-
-            //         );
-            //       }
-            //       return
-            //            Text("No data");
-            //     }),
             ListTile(
               title: Text(
                 "${product.productName}",
@@ -214,10 +256,32 @@ class _UserProductResultState extends State<UserProductResult> {
                   "Add to Cart",
                   style: defaultStyle(),
                 ),
-                onPressed: () {
-                  //print("previous quant:    $x");
+                onPressed: () async{
+                  additem();
+                  
 
-                  // additem(x.toString());
+                 SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                  no = sharedPreferences.getInt('cartno');
+
+                  print(no);
+
+                  if(no==null){
+                    no=1;
+
+                  }else{
+                    no=no+1;
+                  }
+
+
+                  sharedPreferences.setInt("cartno", no);
+
+
+                          Navigator.push(context,MaterialPageRoute(builder:(context)=>
+               EcommerceScreen()));
+
+
+
+                 
                 },
               ),
             ),
@@ -226,4 +290,7 @@ class _UserProductResultState extends State<UserProductResult> {
       ),
     );
   }
+
+
+  
 }

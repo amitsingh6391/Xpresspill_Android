@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../constants.dart';
 
-
-Widget customTextField({String labelText, String hintText,TextEditingController inputController, bool isPassword=false,bool isNumber=false,bool isEmail=false}) {
+Widget customTextField(
+    {String labelText,
+    String hintText,
+    TextEditingController inputController,
+    bool isPassword = false,
+    bool isNumber = false,
+    bool isEmail = false}) {
   return Expanded(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -26,24 +31,28 @@ Widget customTextField({String labelText, String hintText,TextEditingController 
           child: TextFormField(
             obscureText: isPassword,
             controller: inputController,
-            keyboardType: isNumber?TextInputType.phone: isEmail?TextInputType.emailAddress:TextInputType.text,
+            keyboardType: isNumber
+                ? TextInputType.phone
+                : isEmail
+                    ? TextInputType.emailAddress
+                    : TextInputType.text,
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(80),
                 borderSide:
-                const BorderSide(color: Colors.transparent, width: 0.0),
+                    const BorderSide(color: Colors.transparent, width: 0.0),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(80),
                 borderSide:
-                const BorderSide(color: Colors.transparent, width: 0.0),
+                    const BorderSide(color: Colors.transparent, width: 0.0),
               ),
               // disabledBorder: new InputBorder(borderSide: BorderSide.none),
               hintStyle: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
               filled: true,
               fillColor: Colors.black12,
               contentPadding:
-              EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                  EdgeInsets.symmetric(horizontal: 17, vertical: 12),
 
               hintText: hintText,
             ),

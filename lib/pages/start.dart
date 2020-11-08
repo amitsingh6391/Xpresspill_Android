@@ -51,17 +51,7 @@ class Start extends StatelessWidget{
           child: Center(
             child: Column(
               children: <Widget>[
-//                Padding(
-//                  padding: const EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 0.0),
-//                  child: Text(
-//                      'Welcome to XpressPill',
-//                      style: TextStyle(
-//                        fontSize: 35.0,
-//                        fontWeight: FontWeight.bold,
-//                        fontFamily: primaryFontFamily,
-//                      )
-//                  ),
-//                ),
+
                SizedBox(height: 10.0,),
                 SvgPicture.asset('assets/images/7.svg', height: 300.0),
                 Padding(
