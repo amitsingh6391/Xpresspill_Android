@@ -1,3 +1,5 @@
+
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import "package:my_xpresspill/pages/screens/userCartScreen.dart";
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 var prev_quant, prev_price;
-String currentUserId;
-var no;    //number of item in cart;
+String currentUserId, userfirstname, usermobile, userlastname, username;
+var no; //number of item in cart;
 
 TextStyle defaultStyle() {
   return TextStyle(
@@ -31,27 +32,23 @@ class _EcommerceScreenState extends State<EcommerceScreen> {
   Stream<QuerySnapshot> allProducts;
   UserService userService = UserService();
 
- 
-
   @override
   void initState() {
     getnumberofcartitem();
-   super.initState();
+    super.initState();
     var products = productsRef.snapshots();
     setState(() {
       allProducts = products;
     });
   }
 
-
-  getnumberofcartitem() async{
+  getnumberofcartitem() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                  no = sharedPreferences.getInt('cartno');
+    no = sharedPreferences.getInt('cartno');
 
-                setState((){
-no = sharedPreferences.getInt('cartno');
-                });
-
+    setState(() {
+      no = sharedPreferences.getInt('cartno');
+    });
   }
 
   StreamBuilder buildProductResults() {
@@ -85,69 +82,60 @@ no = sharedPreferences.getInt('cartno');
     return Scaffold(
       appBar: AppBar(
         title: Text(
-         "Buy Products",
+          "Buy Products",
           style: defaultStyle(),
         ),
         backgroundColor: primaryColor,
         centerTitle: true,
-       
-
-
-
-
-
         actions: <Widget>[
-
-      new Padding(padding: const EdgeInsets.all(10.0),
-
-        child: new Container(
-          height: 150.0,
-          width: 30.0,
-          child: new GestureDetector(
-            onTap: () {
-                     Navigator.push(context,MaterialPageRoute(builder:(context)=>
-               UserCartScreen(currentuserid:currentUserId)));
-            },
-
-            child: new Stack(
-
-              children: <Widget>[
-                new IconButton(icon: new Icon(Icons.shopping_cart,
-                  color: Colors.white,),
-                    onPressed: null,
-                ),
-                no == null ? new Container() :
-                new Positioned(
-
-                    child: new Stack(
-                      children: <Widget>[
-                        new Icon(
-                            Icons.brightness_1,
-                            size: 20.0, color: Colors.green[800]),
-                        new Positioned(
-                            top: 3.0,
-                            right: 4.0,
-                            child: new Center(
-                              child: new Text(
-                                no.toString(),
-                                style: new TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11.0,
-                                    fontWeight: FontWeight.w500
-                                ),
-                              ),
+          new Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: new Container(
+                height: 150.0,
+                width: 30.0,
+                child: new GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                UserCartScreen(currentuserid: currentUserId)));
+                  },
+                  child: new Stack(
+                    children: <Widget>[
+                      new IconButton(
+                        icon: new Icon(
+                          Icons.shopping_cart,
+                          color: Colors.white,
+                        ),
+                        onPressed: null,
+                      ),
+                      no == null
+                          ? new Container()
+                          : new Positioned(
+                              child: new Stack(
+                              children: <Widget>[
+                                new Icon(Icons.brightness_1,
+                                    size: 20.0, color: Colors.green[800]),
+                                new Positioned(
+                                    top: 3.0,
+                                    right: 4.0,
+                                    child: new Center(
+                                      child: new Text(
+                                        no.toString(),
+                                        style: new TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11.0,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    )),
+                              ],
                             )),
-
-
-                      ],
-                    )),
-
-              ],
-            ),
+                    ],
+                  ),
+                )),
           )
-        )
-
-        ,)],
+        ],
       ),
       body: allProducts == null
           ? Center(child: CircularProgressIndicator())
@@ -177,8 +165,7 @@ class _UserProductResultState extends State<UserProductResult> {
   final Product product;
 
   _UserProductResultState(this.product);
-  
- 
+
   @override
   void initState() {
     _getCurrentUserId();
@@ -190,10 +177,15 @@ class _UserProductResultState extends State<UserProductResult> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       currentUserId = preferences.getString("userId");
+      usermobile = preferences.getString("userContactNumber");
+      userfirstname = preferences.getString("userFirstName");
+      userlastname = preferences.getString("userLastName");
+      username = userfirstname + userlastname;
     });
   }
 
-  additem() async {    //additem function will be invoked when user want to add item in their cart
+  additem() async {
+    //additem function will be invoked when user want to add item in their cart
     await FirebaseFirestore.instance
         .collection("cart")
         .doc(currentUserId)
@@ -204,19 +196,44 @@ class _UserProductResultState extends State<UserProductResult> {
       "itemprice": product.productPrice,
       "itemQuantity": 1,
       "itemUrl": product.mediaUrl,
-      "productid":product.productId,
-      "isSubmit":false
+      "productid": product.productId,
+      "userid": currentUserId,
+      "maxqty":product.productQuantity
+      
     });
 
     print("ok i add this product in cart");
 
     Fluttertoast.showToast(
-          msg: "Your Item is add in Cart",
-          fontSize: 15,
-          backgroundColor: Colors.black,
-          toastLength: Toast.LENGTH_LONG,
-          textColor: Colors.white,
-        );
+      msg: "Your Item is add in Cart",
+      fontSize: 15,
+      backgroundColor: Colors.black,
+      toastLength: Toast.LENGTH_LONG,
+      textColor: Colors.white,
+    );
+    addproductonpharmapage();
+  }
+
+  //addd prdoucts at pharmasicst page
+
+  addproductonpharmapage() async {
+    //additem function will be invoked when user want to add item in their cart
+    await FirebaseFirestore.instance
+        .collection("ProductOrders")
+        .doc(currentUserId + product.productId)
+        .set({
+      "itemname": product.productName,
+      "itemprice": product.productPrice,
+      "itemQuantity": 1,
+      "itemUrl": product.mediaUrl,
+      "productid": product.productId,
+      "isSubmit": false,
+      "userid": currentUserId,
+      "usermobile": usermobile,
+      "username": username,
+    });
+
+    print("ok i add this product in pharmapage");
   }
 
   @override
@@ -256,32 +273,27 @@ class _UserProductResultState extends State<UserProductResult> {
                   "Add to Cart",
                   style: defaultStyle(),
                 ),
-                onPressed: () async{
+                onPressed: () async {
                   additem();
-                  
 
-                 SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                  SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
                   no = sharedPreferences.getInt('cartno');
 
                   print(no);
 
-                  if(no==null){
-                    no=1;
-
-                  }else{
-                    no=no+1;
+                  if (no == null) {
+                    no = 1;
+                  } else {
+                    no = no + 1;
                   }
-
 
                   sharedPreferences.setInt("cartno", no);
 
-
-                          Navigator.push(context,MaterialPageRoute(builder:(context)=>
-               EcommerceScreen()));
-
-
-
-                 
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EcommerceScreen()));
                 },
               ),
             ),
@@ -290,7 +302,4 @@ class _UserProductResultState extends State<UserProductResult> {
       ),
     );
   }
-
-
-  
 }

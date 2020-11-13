@@ -5,27 +5,25 @@ import 'package:my_xpresspill/services/userService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 
-
-
 class MyDrawer extends StatefulWidget {
   @override
   _MyDrawerState createState() => _MyDrawerState();
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-
   String _name;
   String _email;
   String _contactNumber;
-  UserService _userService=new UserService();
+  UserService _userService = new UserService();
 
-  _getUserDetails()async
-  {
-    SharedPreferences preferences=await SharedPreferences.getInstance();
+  _getUserDetails() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      _name=preferences.getString("userFirstName")+" "+preferences.getString("userLastName");
-      _email=preferences.getString("userEmail");
-      _contactNumber=preferences.getString("userContactNumber");
+      _name = preferences.getString("userFirstName") +
+          " " +
+          preferences.getString("userLastName");
+      _email = preferences.getString("userEmail");
+      _contactNumber = preferences.getString("userContactNumber");
     });
   }
 
@@ -35,32 +33,53 @@ class _MyDrawerState extends State<MyDrawer> {
     super.initState();
   }
 
-  TextStyle defaultStyle()
-  {
+  TextStyle defaultStyle() {
     return TextStyle(
-      fontFamily: primaryFontFamily,
-      fontWeight: FontWeight.bold
-    );
+        fontFamily: primaryFontFamily, fontWeight: FontWeight.bold);
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Drawer(
       child: ListView(
         children: [
-          DrawerHeader(),
-          ListTile(
-            title: Text("$_name",style: defaultStyle(),),
+          DrawerHeader(
+            child: Center(
+                child: Column(children: [
+              Image(
+                  image: AssetImage("assets/images/appicon.png"),
+                  height: 100,
+                  width: size.width * 1),
+              Text("Easiest Way To Manage Your Medications",
+                  style: TextStyle(color: primaryColor)),
+            ])),
+            decoration: BoxDecoration(),
           ),
           ListTile(
-            title: Text("$_email",style: defaultStyle(),),
+            title: Text(
+              "$_name",
+              style: defaultStyle(),
+            ),
           ),
           ListTile(
-            title: Text("$_contactNumber",style: defaultStyle(),),
+            title: Text(
+              "$_email",
+              style: defaultStyle(),
+            ),
           ),
           ListTile(
-            title: Text("Logout",style: defaultStyle(),),
-            onTap: (){
+            title: Text(
+              "$_contactNumber",
+              style: defaultStyle(),
+            ),
+          ),
+          ListTile(
+            title: Text(
+              "Logout",
+              style: defaultStyle(),
+            ),
+            onTap: () {
               _userService.logOut(context);
             },
           )
@@ -69,59 +88,3 @@ class _MyDrawerState extends State<MyDrawer> {
     );
   }
 }
-
-
-
-//
-//Widget userDetailsDrawer({BuildContext context})
-//{
-//
-//  return Drawer(
-//    child: ListView(
-//      padding: EdgeInsets.zero,
-//      children: <Widget>[
-//        DrawerHeader(
-//          decoration: BoxDecoration(
-//              color: primaryColor
-//          ),
-//          padding: EdgeInsets.all(10.0),
-//          child: Column(
-//            crossAxisAlignment: CrossAxisAlignment.start,
-//            children: <Widget>[
-//              Row(
-//                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                children: <Widget>[
-//                  Padding(
-//                    padding: EdgeInsets.symmetric(vertical: 5.0),
-//                    child:Text("${user.displayName}",
-//                      style: TextStyle(
-//                        fontSize:25.0,
-//                      ),
-//                    ),
-//                  ),
-//                  IconButton(icon: Icon(AntDesign.edit),alignment: Alignment.topRight,),
-//                ],
-//              ),
-//              Padding(
-//                padding: EdgeInsets.symmetric(vertical:5.0),
-//                child: Text("${user.email}",
-//                  style: TextStyle(
-//                    fontSize:15.0,
-//                  ),
-//                ),
-//              ),
-//
-//            ],
-//          ),
-//
-//        ),
-//        ListTile(
-//          onTap:(){
-//
-//          },
-//          title: Text("Logout"),
-//        ),
-//      ],
-//    ),
-//  );
-//}

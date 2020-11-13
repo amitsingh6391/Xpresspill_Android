@@ -46,7 +46,7 @@ class _PrescriptionResultState extends State<PrescriptionResult> {
 //  }
 
   void _getUserDetails(userId) async {
-    DocumentSnapshot doc = await userRef.document(userId).get();
+    DocumentSnapshot doc = await userRef.doc(userId).get();
     setState(() {
       user = MyUser.fromDocument(doc);
       print("-------------------------------${user.firstName}");
@@ -184,7 +184,7 @@ class _PrescriptionResultState extends State<PrescriptionResult> {
                                   !prescription.isDispatched)
                               ? () {
                                   prescriptionsRef
-                                      .document(prescription.prescriptionId)
+                                      .doc(prescription.prescriptionId)
                                       .update({"isDispatched": true}).then(
                                           (value) {
                                     setState(() {
