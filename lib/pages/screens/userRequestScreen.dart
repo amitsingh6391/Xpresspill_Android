@@ -33,7 +33,7 @@ class _UserRequestScreenState extends State<UserRequestScreen> {
 
     });
     print(_userId);
-    Future<QuerySnapshot> requests=Firestore.instance.collection("prescriptionTransfers").where("userId",isEqualTo: _userId).getDocuments();
+    Future<QuerySnapshot> requests=FirebaseFirestore.instance.collection("prescriptionTransfers").where("userId",isEqualTo: _userId).get();
     setState(() {
       allRequests=requests;
     });

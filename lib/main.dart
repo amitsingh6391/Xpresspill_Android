@@ -13,6 +13,7 @@ import 'package:my_xpresspill/pages/screens/pharmacistRequestScreen.dart';
 import 'package:my_xpresspill/pages/screens/transferPrescriptionScreen.dart';
 import 'package:my_xpresspill/pages/screens/userCartScreen.dart';
 import 'package:my_xpresspill/pages/screens/userRequestScreen.dart';
+
 import 'package:my_xpresspill/pages/signup.dart';
 import 'package:my_xpresspill/pages/start.dart';
 import 'package:my_xpresspill/pages/userHome.dart';
@@ -61,7 +62,8 @@ class MyApp extends StatelessWidget {
         '/transferprescription': (context) => TransferPrescriptionScreen(),
         '/userrequestscreen': (context) => UserRequestScreen(),
         '/pharmacistrequestscreen': (context) => PharmacistRequestScreen(),
-        '/usercart': (context) => UserCartScreen()
+        '/usercart': (context) => UserCartScreen(),
+      
       },
       theme: ThemeData(
           

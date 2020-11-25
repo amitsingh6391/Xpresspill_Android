@@ -5,6 +5,7 @@ import 'package:my_xpresspill/components/loader.dart';
 import 'package:my_xpresspill/constants.dart';
 import 'package:my_xpresspill/services/userService.dart';
 import 'package:my_xpresspill/services/validateService.dart';
+import "package:my_xpresspill/components/forgotpassword.dart";
 
 class Login extends StatefulWidget {
   @override
@@ -20,9 +21,11 @@ class _LoginState extends State<Login> {
 
   ValidateService _validateService = ValidateService();
   UserService _userService = UserService();
- 
-  login() async {  //loginfunction will be invoked when user will be provide their correct passwprd and email
-    if (this._formKey.currentState.validate()) {   //otherwise according to statuscode we will show thm=em errors.
+
+  login() async {
+    //loginfunction will be invoked when user will be provide their correct passwprd and email
+    if (this._formKey.currentState.validate()) {
+      //otherwise according to statuscode we will show thm=em errors.
       _formKey.currentState.save();
       Loader.showLoadingScreen(context, _keyLoader);
       await _userService.login(userValues);
@@ -30,12 +33,14 @@ class _LoginState extends State<Login> {
       int statusCode = _userService.statusCode;
 
       if (statusCode == 200) {
-        if (_userService.currentUserDetails.isPharmacist) {     //here we will navigate user according to
-          Navigator.pushReplacementNamed(context, '/pharmacisthome');  //their status.
-        } else if (_userService.currentUserDetails.isAdmin) {
+        if (_userService.currentUserDetails.role == 'pharmacist') {
+          //here we will navigate user according to
+          Navigator.pushReplacementNamed(
+              context, '/pharmacisthome'); //their status.
+        } else if (_userService.currentUserDetails.role == 'admin') {
           Navigator.pushReplacementNamed(context, '/home');
-        } else if (!_userService.currentUserDetails.isAdmin &&
-            !_userService.currentUserDetails.isPharmacist)
+        } else if (_userService.currentUserDetails.role != 'admin' &&
+            _userService.currentUserDetails.role != 'pharmacist')
           Navigator.pushReplacementNamed(context, '/userhome');
       } else {
         AlertBox alertBox = AlertBox(_userService.msg);
@@ -85,7 +90,7 @@ class _LoginState extends State<Login> {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 15.0),
           child: Form(
-            key: _formKey,           //we define our form key for login validation...
+            key: _formKey, //we define our form key for login validation...
             autovalidate: _autoValidate,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -154,7 +159,8 @@ class _LoginState extends State<Login> {
                             ),
                           ],
                         ),
-                      )
+                      ),
+                      Forgotpassword()
                     ],
                   ),
                 )

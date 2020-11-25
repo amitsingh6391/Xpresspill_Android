@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_xpresspill/constants.dart';
-import 'package:my_xpresspill/pages/screens/addhealthcard.dart';
+
+import 'package:my_xpresspill/pages/screens/completeprofile.dart';
+import 'package:my_xpresspill/pages/screens/userprescription.dart';
+import 'package:my_xpresspill/pages/screens/userdocuments.dart';
 import 'package:my_xpresspill/services/userService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,6 +39,47 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   void initState() {
     _getUserDetails();
     super.initState();
+  }
+
+  selectImage(parentContext) {
+    return showDialog(
+      context: parentContext,
+      builder: (context) {
+        return SimpleDialog(
+          title: Text(
+            "Complete Your Profile",
+            style: TextStyle(fontFamily: primaryFontFamily),
+          ),
+          children: <Widget>[
+            SimpleDialogOption(
+                child: Text(
+                  "Add your Health Card",
+                  style: TextStyle(fontFamily: primaryFontFamily),
+                ),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Addhealthcard()));
+                }),
+            SimpleDialogOption(
+                child: Text(
+                  "Add your Licences",
+                  style: TextStyle(fontFamily: primaryFontFamily),
+                ),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Addlicences()));
+                }),
+            SimpleDialogOption(
+              child: Text(
+                "Cancel",
+                style: TextStyle(fontFamily: primaryFontFamily),
+              ),
+              onPressed: () => Navigator.pop(context),
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -75,17 +119,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 Padding(
                   padding: EdgeInsets.only(top: 10.0),
                   child: ListTile(
-                      leading: Icon(Icons.exit_to_app),
-                      title: Text(
-                        'Logout',
-                        style: defaultStyle(),
-                      ),
-                      //trailing: Icon(AntDesign.logout, color: Colors.yellow),
-                      onTap: () => _userService.logOut(context)),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: ListTile(
                       leading: Icon(Icons.pending),
                       title: Text(
                         'Requests',
@@ -96,17 +129,57 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         Navigator.of(context).pushNamed('/userrequestscreen');
                       }),
                 ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: ListTile(
+                      leading: Icon(Icons.book),
+                      title: Text(
+                        'My Prescription',
+                        style: defaultStyle(),
+                      ),
+                      //trailing: Icon(AntDesign.logout, color: Colors.yellow),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Userprescription()));
+                      }),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: ListTile(
+                      leading: Icon(Icons.notes),
+                      title: Text(
+                        'My Documents',
+                        style: defaultStyle(),
+                      ),
+                      //trailing: Icon(AntDesign.logout, color: Colors.yellow),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Userdocuments()));
+                      }),
+                ),
                 ListTile(
-                  title: Text('Update Profile'),
-                  subtitle: Text('Upload health Card '),
+                  title: Text('Complete Profile'),
+                  //subtitle: Text('Upload health Card '),
                   leading: Icon(Icons.note_add),
                   trailing: Icon(Icons.chevron_right, color: Colors.yellow),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Addhealthcard()));
+                    selectImage(context);
                   },
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: ListTile(
+                      leading: Icon(Icons.exit_to_app),
+                      title: Text(
+                        'Logout',
+                        style: defaultStyle(),
+                      ),
+                      //trailing: Icon(AntDesign.logout, color: Colors.yellow),
+                      onTap: () => _userService.logOut(context)),
                 ),
                 Divider(),
               ],

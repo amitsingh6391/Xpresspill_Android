@@ -9,3 +9,4 @@ TextStyle defaultStyle({FontWeight weight=FontWeight.normal,Color color=Colors.b
       color: color
   );
 }
+

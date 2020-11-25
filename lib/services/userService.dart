@@ -9,9 +9,11 @@ import 'package:jaguar_jwt/jaguar_jwt.dart';
 import 'package:my_xpresspill/models/User.dart';
 import 'package:my_xpresspill/pages/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
- 
-class UserService {                       //we are define useservice class inside class we will define 
-  FirebaseAuth _auth = FirebaseAuth.instance;           //our whole methods ,which will be used in later.
+
+class UserService {
+  //we are define useservice class inside class we will define
+  FirebaseAuth _auth =
+      FirebaseAuth.instance; //our whole methods ,which will be used in later.
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final storage = new FlutterSecureStorage();
   final String sharedKey = 'sharedKey';
@@ -20,8 +22,9 @@ class UserService {                       //we are define useservice class insid
   MyUser currentUserDetails;
   SharedPreferences sharedPreferences;
 
-  void createAndStoreJWTToken(String uid) async {            //in this method we are genrate a uniquw 
-                                                          //token for each users.
+  void createAndStoreJWTToken(String uid) async {
+    //in this method we are genrate a uniquw
+    //token for each users.
     var builder = new JWTBuilder();
     var token = builder
       ..expiresAt = new DateTime.now().add(new Duration(hours: 3))
@@ -50,24 +53,35 @@ class UserService {                       //we are define useservice class insid
     return null;
   }
 
-  void logOut(context) async {             //logout function will be invoked when users want to switch 
-    await storage.delete(key: 'token');  //their accounts from our app. for this we will also delete  
-    sharedPreferences = await SharedPreferences.getInstance();   //their token  number
-    sharedPreferences.clear();
-    sharedPreferences.commit();
+  void logOut(context) async {
+    //logout function will be invoked when users want to switch
+    await storage.delete(
+        key:
+            'token'); //their accounts from our app. for this we will also delete
+    sharedPreferences =
+        await SharedPreferences.getInstance(); //their token  number
+    // sharedPreferences.clear();
+    // sharedPreferences.commit();
     Navigator.of(context).pushReplacementNamed('/');
   }
 
-  Future<void> login(userValues) async {  //login function will be invoked at a time whe user wan to login 
-    String email = userValues['email'];      //inside our app for this method we need 2 parameters taht
-    String password = userValues['password'];  //are email and password.
+  Future<void> login(userValues) async {
+    //login function will be invoked at a time whe user wan to login
+
+    String email = userValues[
+        'email']; //inside our app for this method we need 2 parameters taht
+    String password = userValues['password']; //are email and password.
 
     await _auth
         .signInWithEmailAndPassword(email: email, password: password)
-        .then((dynamic user) async {                   //if the user is successfully login then we will 
-                                               //save their details in locally by using share prefer....
+        .then((dynamic user) async {
+      //if the user is successfully login then we will
+      //save their details in locally by using share prefer....
       User currentUser = FirebaseAuth.instance.currentUser;
       final uid = currentUser.uid;
+      print("****************$uid");
+      //print(currentUserDetails.id);
+      print("hiii");
       DocumentSnapshot doc = await userRef.doc(uid).get();
       currentUserDetails = MyUser.fromDocument(doc);
       sharedPreferences = await SharedPreferences.getInstance();
@@ -78,15 +92,16 @@ class UserService {                       //we are define useservice class insid
       sharedPreferences.setString("userEmail", currentUserDetails.email);
       sharedPreferences.setString(
           "userContactNumber", currentUserDetails.contactNumber);
-      sharedPreferences.setBool("isAdmin", currentUserDetails.isAdmin);
-      sharedPreferences.setBool(
-          "isPharmacist", currentUserDetails.isPharmacist);
+      sharedPreferences.setString("role", currentUserDetails.role);
+     
       createAndStoreJWTToken(uid);
 
-      statusCode = 200;     //and at the end we will assign statuscode =200 because user login is successfull
+      statusCode =
+          200; //and at the end we will assign statuscode =200 because user login is successfull
     }).catchError((error) {
-      handleAuthErrors(error); //or in case of any error we will handel that by using try and catch
-    });                         //this handleautherros() function will be invoked if any kind off errors occurs
+      handleAuthErrors(
+          error); //or in case of any error we will handel that by using try and catch
+    }); //this handleautherros() function will be invoked if any kind off errors occurs
   }
 
   Future<String> getUserId() async {
@@ -95,15 +110,28 @@ class UserService {                       //we are define useservice class insid
     return uid;
   }
 
+  Future<void> resetpassword() async {
+    ///this function will be invoked when user wants to reset his password
+    // print(mymail);
+    sharedPreferences = await SharedPreferences.getInstance();
+    String mymail = sharedPreferences.getString("userEmail");
+    print(mymail);
+    await _auth.sendPasswordResetEmail(email: mymail);
+  }
+
   Future<void> signup(userValues) async {
     String email = userValues['email'];
-    String password = userValues['password'];   //and the same thing we nee 2 parameters at a time of signup
+    String password = userValues[
+        'password']; //and the same thing we nee 2 parameters at a time of signup
 
     print("signup proccess");
     try {
       await _auth
-          .createUserWithEmailAndPassword(email: email, password: password) //after signup we will store their 
-          .then((dynamic user) {                    //information in backend.
+          .createUserWithEmailAndPassword(
+              email: email,
+              password: password) //after signup we will store their
+          .then((dynamic user) {
+        //information in backend.
         String uid = user.user.uid;
         _firestore.collection('users').doc(uid).set({
           'firstName': capitalizeName(userValues['firstName']),
@@ -113,8 +141,11 @@ class UserService {                       //we are define useservice class insid
           'id': uid,
           'dob': userValues['dob'],
           'createdAt': DateTime.now(),
-          'isAdmin': false,
-          'isPharmacist': false
+          'role': 'user',
+          "Healthcard":"",
+          "Licencescard":""
+          // 'isAdmin': false,
+          // 'isPharmacist': false
         });
 
         print("signup ");
@@ -127,10 +158,13 @@ class UserService {                       //we are define useservice class insid
   }
 
   void handleAuthErrors(error) {
+    print("error");
+
     String errorCode = error.code;
-    print(errorCode);
-    print("yes");                       //insdie this function we are check diffrent possible error case
-    switch (errorCode) {     //according to them we will assing statuscode 
+    print("******************$errorCode");
+    //insdie this function we are check diffrent possible error case
+    switch (errorCode) {
+      //according to them we will assing statuscode
       case "email-already-in-use":
         {
           statusCode = 400;
@@ -146,7 +180,7 @@ class UserService {                       //we are define useservice class insid
         }
         break;
 
-         case "user-not-found":
+      case "user-not-found":
         {
           statusCode = 400;
           msg = "User not found";
@@ -154,9 +188,7 @@ class UserService {                       //we are define useservice class insid
         }
         break;
 
-        
-
-       case "invalid-email":
+      case "invalid-email":
         {
           statusCode = 400;
           msg = "Invalid - Email";
@@ -171,9 +203,10 @@ class UserService {                       //we are define useservice class insid
         }
     }
   }
- 
-  String capitalizeName(String name) {     //this function will hepls us  to captializename when user did 
-    name = name[0].toUpperCase() + name.substring(1);  //not to that.
+
+  String capitalizeName(String name) {
+    //this function will hepls us  to captializename when user did
+    name = name[0].toUpperCase() + name.substring(1); //not to that.
     return name;
   }
 
@@ -183,3 +216,14 @@ class UserService {                       //we are define useservice class insid
     return user.email;
   }
 }
+
+// name = name[0].toUpperCase() + name.substring(1); //not to that.
+// return name;
+
+//}
+// Future<String> userEmail() async {//
+//   User user = FirebaseAuth.instance.currentUser;
+//   // var user = await _auth.currentUser();
+//   return user.email;
+// }
+//}

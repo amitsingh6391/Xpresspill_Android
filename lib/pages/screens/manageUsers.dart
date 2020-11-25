@@ -21,7 +21,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   void initState() {
     super.initState();
     Future<QuerySnapshot> users =
-        userRef.where("isAdmin", isEqualTo: false).getDocuments();
+        userRef.where('role', isNotEqualTo: "admin").get();
     setState(() {
       allUsers = users;
     });
@@ -69,14 +69,13 @@ class UserResult extends StatefulWidget {
   final MyUser user;
   UserResult(this.user);
   @override
-  _UserResultState createState() =>
-      _UserResultState(this.user, this.user.isPharmacist);
+  _UserResultState createState() => _UserResultState(this.user, this.user.role);
 }
 
 class _UserResultState extends State<UserResult> {
   final MyUser user;
-  bool isPharmacist;
-  _UserResultState(this.user, this.isPharmacist);
+  String role;
+  _UserResultState(this.user, this.role);
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +87,7 @@ class _UserResultState extends State<UserResult> {
           style: defaultStyle(),
         ),
         subtitle: Text(
-          "${isPharmacist ? "Pharmacist" : "User"}",
+          "$role",
           style: defaultStyle(),
         ),
         trailing: IconButton(
@@ -107,13 +106,13 @@ class _UserResultState extends State<UserResult> {
                         onPressed: () {
                           print(user.id);
                           userRef
-                              .document(user.id)
+                              .doc(user.id)
                               .get()
                               .then((DocumentSnapshot doc) {
-                            doc.reference.updateData(
-                                <String, dynamic>{"isPharmacist": false});
+                            doc.reference
+                                .update(<String, dynamic>{"user": 'user'});
                             setState(() {
-                              isPharmacist = false;
+                              role = 'user';
                             });
                             Navigator.of(context).pop();
                           }).catchError((onError) {});
@@ -127,13 +126,13 @@ class _UserResultState extends State<UserResult> {
                         onPressed: () {
                           print(user.id);
                           userRef
-                              .document(user.id)
+                              .doc(user.id)
                               .get()
                               .then((DocumentSnapshot doc) {
-                            doc.reference.updateData(
-                                <String, dynamic>{"isPharmacist": true});
+                            doc.reference.update(
+                                <String, dynamic>{"role": 'pharmacist'});
                             setState(() {
-                              isPharmacist = true;
+                              role = 'pharmacist';
                             });
                             Navigator.of(context).pop();
                           }).catchError((onError) {});

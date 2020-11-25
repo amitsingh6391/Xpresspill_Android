@@ -37,14 +37,7 @@ class _PrescriptionResultState extends State<PrescriptionResult> {
     super.initState();
   }
 
-//  _getCurrentUserId()async
-//  {
-//    SharedPreferences preferences=await SharedPreferences.getInstance();
-//    setState(() {
-//      currentUserId=preferences.getString("userId");
-//    });
-//  }
-
+  //we will call the functions for get the user details...
   void _getUserDetails(userId) async {
     DocumentSnapshot doc = await userRef.doc(userId).get();
     setState(() {
@@ -62,7 +55,18 @@ class _PrescriptionResultState extends State<PrescriptionResult> {
         child: Column(
           children: <Widget>[
             ListTile(
-              //leading: prescription.isLocked?Icon(AntDesign.lock):Icon(AntDesign.unlock),
+              leading: GestureDetector(
+                  onTap: () {
+                    print("Profile");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Userhealthcard(userid: user.id)));
+                  },
+                  child: CircleAvatar(
+                      backgroundColor: primaryColor,
+                      child: Icon(Icons.person, color: Colors.white))),
               title: user != null
                   ? Text(
                       "${user.firstName} ${user.lastName}",
@@ -107,43 +111,6 @@ class _PrescriptionResultState extends State<PrescriptionResult> {
                 imageProvider: NetworkImage("${prescription.prescriptionUrl}"),
               ),
             ),
-//            Container(
-//              height: 200.0,
-//              width: MediaQuery.of(context).size.width * 0.8,
-//              child: Center(
-//                child: AspectRatio(
-//                  aspectRatio: 16 / 9,
-//                  child: Container(
-//                    decoration: BoxDecoration(
-//                      image: DecorationImage(
-//                        fit: BoxFit.cover,
-//                        image: NetworkImage("${prescription.prescriptionUrl}"),
-//                      ),
-//                    ),
-////                    child: Center(
-////                      child: PinchZoomImage(
-////                        image: Image.network('${prescription.prescriptionUrl}'),
-////                        zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
-////                        onZoomStart: () {
-////                          print('Zoom started');
-////                        },
-////                        onZoomEnd: () {
-////                          print('Zoom finished');
-////                        },
-////
-////                      ),
-////                    ),
-//                  ),
-//                ),
-//              ),
-//            ),
-//            Padding(
-//              padding: EdgeInsets.all(10.0),
-//              child: Container(
-//                height: 200,
-//                child: CachedNetworkImage(imageUrl:"${prescription.prescriptionUrl}" ),
-//              ),
-//            ),
             prescription.isLocked
                 ? Padding(
                     padding: const EdgeInsets.all(5.0),
@@ -247,5 +214,52 @@ class _PrescriptionResultState extends State<PrescriptionResult> {
         ),
       ),
     );
+  }
+}
+
+class Userhealthcard extends StatefulWidget {
+  String userid;
+  Userhealthcard({@required this.userid});
+
+  @override
+  _UserhealthcardState createState() => _UserhealthcardState();
+}
+
+class _UserhealthcardState extends State<Userhealthcard> {
+  MyUser user;
+
+  @override
+  void initState() {
+    print("userid");
+    _getUserDetails(widget.userid);
+    print("userid");
+
+    super.initState();
+  }
+
+  //we will call the functions for get the user details...
+  void _getUserDetails(userId) async {
+    DocumentSnapshot doc = await userRef.doc(userId).get();
+    setState(() {
+      user = MyUser.fromDocument(doc);
+      try {
+        // print("-------------------------------${user.healthcard}");
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("User Health Card"),
+          backgroundColor: primaryColor,
+        ),
+        body: Container(
+            child: Column(children: [
+          // Image(image:NetworkImage(user.healthcard))
+        ])));
   }
 }

@@ -7,8 +7,9 @@ class MyUser {
   final String email;
   final String contactNumber;
   final String dob;
-  final bool isAdmin;
-  final bool isPharmacist;
+  // final bool isAdmin;
+  // final bool isPharmacist;
+  final String role;
 
   MyUser({
     this.id,
@@ -17,20 +18,23 @@ class MyUser {
     this.email,
     this.contactNumber,
     this.dob,
-    this.isAdmin,
-    this.isPharmacist,
+    // this.isAdmin,
+    // this.isPharmacist,
+    this.role,
   });
 
   factory MyUser.fromDocument(DocumentSnapshot doc) {
     return MyUser(
-      id: doc['id'],
-      firstName: doc['firstName'],
-      lastName: doc['lastName'],
-      email: doc['email'],
-      contactNumber: doc['contactNumber'],
-      dob: doc['dob'],
-      isAdmin: doc['isAdmin'],
-      isPharmacist: doc['isPharmacist'],
-    );
+        id: doc['id'],
+        firstName: doc['firstName'],
+        lastName: doc['lastName'],
+        email: doc['email'],
+        contactNumber: doc['contactNumber'],
+        dob: doc['dob'],
+        // isAdmin: doc['isAdmin'],
+        // isPharmacist: doc['isPharmacist'],
+        role: doc['role']
+        // healthcard: doc["healthcard"]
+        );
   }
 }

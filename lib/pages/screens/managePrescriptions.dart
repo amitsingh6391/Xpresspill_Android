@@ -42,12 +42,7 @@ class _ManagePrescriptionsState extends State<ManagePrescriptions> {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
-//        List<PrescriptionResult> searchResults=[];
-//        snapshot.data.documents.forEach((doc){
-//          Prescription prescription=Prescription.fromDocument(doc);
-//          PrescriptionResult searchResult=PrescriptionResult(prescription);
-//          searchResults.add(searchResult);
-//        });
+
 
         return ListView.builder(
             itemCount: snapshot.data.documents.length,
