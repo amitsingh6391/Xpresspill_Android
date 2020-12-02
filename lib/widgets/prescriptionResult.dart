@@ -6,6 +6,8 @@ import 'package:my_xpresspill/models/Prescription.dart';
 import 'package:my_xpresspill/models/User.dart';
 import 'package:my_xpresspill/pages/home.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:get/get.dart';
+import "package:my_xpresspill/pages/screens/userorders.dart";
 
 TextStyle defaultStyle() {
   return TextStyle(
@@ -62,7 +64,7 @@ class _PrescriptionResultState extends State<PrescriptionResult> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                Userhealthcard(userid: user.id)));
+                                Userdocuments(userid: user.id)));
                   },
                   child: CircleAvatar(
                       backgroundColor: primaryColor,
@@ -187,7 +189,25 @@ class _PrescriptionResultState extends State<PrescriptionResult> {
                       ],
                     ),
                   )
-                : Text(""),
+                : Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(Productorders(userid: prescription.userId));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 38.0, bottom: 10, left: 30),
+                        child: Text(
+                          "Order",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: primaryFontFamily,
+                              fontWeight: FontWeight.bold,
+                              color: primaryColor),
+                        ),
+                      ),
+                    ),
+                  ]),
             prescription.isLocked
                 ? Padding(
                     padding: const EdgeInsets.all(5.0),
@@ -217,22 +237,22 @@ class _PrescriptionResultState extends State<PrescriptionResult> {
   }
 }
 
-class Userhealthcard extends StatefulWidget {
+class Userdocuments extends StatefulWidget {
   String userid;
-  Userhealthcard({@required this.userid});
+  Userdocuments({@required this.userid});
 
   @override
-  _UserhealthcardState createState() => _UserhealthcardState();
+  _UserdocumentsState createState() => _UserdocumentsState();
 }
 
-class _UserhealthcardState extends State<Userhealthcard> {
+class _UserdocumentsState extends State<Userdocuments> {
   MyUser user;
 
   @override
   void initState() {
     print("userid");
     _getUserDetails(widget.userid);
-    print("userid");
+    print(widget.userid);
 
     super.initState();
   }
@@ -253,13 +273,121 @@ class _UserhealthcardState extends State<Userhealthcard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("User Health Card"),
-          backgroundColor: primaryColor,
-        ),
-        body: Container(
-            child: Column(children: [
-          // Image(image:NetworkImage(user.healthcard))
-        ])));
+      appBar: AppBar(
+        title: Text("User Documents"),
+        backgroundColor: primaryColor,
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+            child: StreamBuilder(
+                stream: userRef.doc(widget.userid).snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(primaryColor2),
+                    );
+                  }
+
+                  var Profiledetail = snapshot.data;
+                  String healthcard = Profiledetail["Healthcard"];
+                  String Insurance = Profiledetail["Insurance"];
+                  print(healthcard);
+                  print(Insurance);
+
+                  return Column(children: [
+                    SizedBox(height: 50),
+                    healthcard != ""
+                        ? Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 220.0,
+                                width: MediaQuery.of(context).size.width,
+                                child:
+                                    // Image(
+                                    //     image: NetworkImage(healthcard),
+                                    //     fit: BoxFit.fill),
+                                    Image.network(
+                                  healthcard,
+                                  fit: BoxFit.fill,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes
+                                            : null,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child:
+                                    Text("HealthCard", style: defaultStyle()))
+                          ])
+                        : Column(children: [
+                            Center(
+                                child: Text("user did not Upload Health card",
+                                    style: defaultStyle())),
+                          ]),
+                    Insurance != ""
+                        ? Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 220.0,
+                                width: MediaQuery.of(context).size.width,
+                                child:
+                                    // Image(
+                                    //   image: NetworkImage(Insurance),
+                                    //   fit: BoxFit.fill,
+                                    // ),
+                                    Image.network(
+                                  Insurance,
+                                  fit: BoxFit.fill,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes
+                                            : null,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Padding(
+                                padding: EdgeInsets.all(20.0),
+                                child: Text("Insurance", style: defaultStyle()))
+                          ])
+                        : Column(children: [
+                            Center(
+                                child: Text(
+                                    "User did not Upload Insurance card",
+                                    style: defaultStyle())),
+                          ]),
+                  ]);
+                })),
+      ),
+    );
   }
 }

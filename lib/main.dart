@@ -1,6 +1,5 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:my_xpresspill/constants.dart';
+
 import 'package:my_xpresspill/pages/home.dart';
 import 'package:my_xpresspill/pages/login.dart';
 import 'package:my_xpresspill/pages/pharmacistHome.dart';
@@ -17,22 +16,11 @@ import 'package:my_xpresspill/pages/screens/userRequestScreen.dart';
 import 'package:my_xpresspill/pages/signup.dart';
 import 'package:my_xpresspill/pages/start.dart';
 import 'package:my_xpresspill/pages/userHome.dart';
-import "dart:async";
-import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
 
 bool firstTime = false;
-
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   //SharedPreferences prefs = await SharedPreferences.getInstance();
-//   // runApp(
-//   //   DevicePreview(
-//   //     builder: (context) => MyApp(),
-//   //   ),
-//   // );
-//   runApp(MyApp());
-// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +32,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
@@ -63,11 +51,8 @@ class MyApp extends StatelessWidget {
         '/userrequestscreen': (context) => UserRequestScreen(),
         '/pharmacistrequestscreen': (context) => PharmacistRequestScreen(),
         '/usercart': (context) => UserCartScreen(),
-      
       },
       theme: ThemeData(
-          
-         
           bottomSheetTheme:
               BottomSheetThemeData(backgroundColor: Colors.white)),
     );

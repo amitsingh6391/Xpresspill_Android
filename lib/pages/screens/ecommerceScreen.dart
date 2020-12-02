@@ -1,17 +1,17 @@
-
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+
 import 'package:my_xpresspill/constants.dart';
 import 'package:my_xpresspill/models/Product.dart';
 import 'package:my_xpresspill/pages/home.dart';
+import 'package:my_xpresspill/pages/userHome.dart';
 import 'package:my_xpresspill/services/userService.dart';
 import 'package:my_xpresspill/widgets/drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import "package:my_xpresspill/pages/screens/userCartScreen.dart";
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 
 var prev_quant, prev_price;
 String currentUserId, userfirstname, usermobile, userlastname, username;
@@ -95,11 +95,13 @@ class _EcommerceScreenState extends State<EcommerceScreen> {
                 width: 30.0,
                 child: new GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                UserCartScreen(currentuserid: currentUserId)));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) =>
+                    //             UserCartScreen(currentuserid: currentUserId)));
+
+                    Get.to(UserCartScreen(currentuserid: currentUserId));
                   },
                   child: new Stack(
                     children: <Widget>[
@@ -145,7 +147,8 @@ class _EcommerceScreenState extends State<EcommerceScreen> {
         backgroundColor: primaryColor2,
         child: Icon(Icons.home),
         onPressed: () {
-          Navigator.of(context).pushReplacementNamed('/userhome');
+          Get.offAll(UserHome());
+          //Navigator.of(context).pushReplacementNamed('/userhome');
         },
       ),
     );
@@ -198,8 +201,7 @@ class _UserProductResultState extends State<UserProductResult> {
       "itemUrl": product.mediaUrl,
       "productid": product.productId,
       "userid": currentUserId,
-      "maxqty":product.productQuantity
-      
+      "maxqty": product.productQuantity
     });
 
     print("ok i add this product in cart");

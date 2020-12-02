@@ -8,25 +8,7 @@ import 'package:my_xpresspill/services/userService.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_xpresspill/models/User.dart';
-import 'package:my_xpresspill/pages/home.dart';
-import 'package:photo_view/photo_view.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import 'package:my_xpresspill/constants.dart';
-import 'package:my_xpresspill/models/Prescription.dart';
-import 'package:my_xpresspill/pages/home.dart';
-import 'package:my_xpresspill/services/userService.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
-
-
-
-
-import 'package:my_xpresspill/models/Prescription.dart';
-import 'package:my_xpresspill/models/User.dart';
-import 'package:my_xpresspill/pages/home.dart';
 import 'package:photo_view/photo_view.dart';
 
 class Userprescription extends StatefulWidget {
@@ -39,7 +21,6 @@ class _UserprescriptionState extends State<Userprescription> {
   UserService _userService = new UserService();
   String currentUserId;
 
-
   @override
   void initState() {
     _getCurrentUserId();
@@ -47,42 +28,34 @@ class _UserprescriptionState extends State<Userprescription> {
     super.initState();
   }
 
-  _getCurrentUserId()async
-  {
-    SharedPreferences preferences=await SharedPreferences.getInstance();
+  _getCurrentUserId() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      currentUserId=preferences.getString("userId");
+      currentUserId = preferences.getString("userId");
     });
     print(currentUserId);
-    var prescriptions=prescriptionsRef.where("userId",isEqualTo: currentUserId).snapshots();
+    var prescriptions =
+        prescriptionsRef.where("userId", isEqualTo: currentUserId).snapshots();
     setState(() {
-      _allPrescriptions=prescriptions;
+      _allPrescriptions = prescriptions;
     });
   }
 
-  StreamBuilder buildPrescriptionResults()
-  {
+  StreamBuilder buildPrescriptionResults() {
     return StreamBuilder(
       stream: _allPrescriptions,
-      builder: (context,snapshot){
-        if(!snapshot.hasData)
-        {
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
-//        List<PrescriptionResult> searchResults=[];
-//        snapshot.data.documents.forEach((doc){
-//          Prescription prescription=Prescription.fromDocument(doc);
-//          PrescriptionResult searchResult=PrescriptionResult(prescription);
-//          searchResults.add(searchResult);
-//        });
 
         return ListView.builder(
-            itemCount:snapshot.data.documents.length,
-            itemBuilder: (context,index){
-              Prescription prescription=Prescription.fromDocument(snapshot.data.documents[index]);
-              return  Prescriptiontile(prescription,currentUserId);
-            }
-        );
+            itemCount: snapshot.data.documents.length,
+            itemBuilder: (context, index) {
+              Prescription prescription =
+                  Prescription.fromDocument(snapshot.data.documents[index]);
+              return Prescriptiontile(prescription, currentUserId);
+            });
       },
     );
   }
@@ -95,32 +68,29 @@ class _UserprescriptionState extends State<Userprescription> {
         backgroundColor: primaryColor,
         centerTitle: true,
         actions: [
-          IconButton(icon: Icon(AntDesign.logout),
-            onPressed: (){
+          IconButton(
+            icon: Icon(AntDesign.logout),
+            onPressed: () {
               _userService.logOut(context);
-            },)
+            },
+          )
         ],
       ),
-      body: _allPrescriptions==null?Center(child: CircularProgressIndicator()):buildPrescriptionResults(),
+      body: _allPrescriptions == null
+          ? Center(child: CircularProgressIndicator())
+          : buildPrescriptionResults(),
       // drawer: userDetailsDrawer(context: context),
     );
   }
 }
 
-
-
-
-
-//user precription will be shown in this prescriptiontile class 
-
-
+//user precription will be shown in this prescriptiontile class
 
 TextStyle defaultStyle() {
   return TextStyle(
     fontFamily: primaryFontFamily,
   );
 }
-
 
 class Prescriptiontile extends StatefulWidget {
   final Prescription prescription;
@@ -142,17 +112,9 @@ class _PrescriptiontileState extends State<Prescriptiontile> {
   @override
   void initState() {
     _getUserDetails(prescription.userId);
-    // _getCurrentUserId();
+
     super.initState();
   }
-
-//  _getCurrentUserId()async
-//  {
-//    SharedPreferences preferences=await SharedPreferences.getInstance();
-//    setState(() {
-//      currentUserId=preferences.getString("userId");
-//    });
-//  }
 
   void _getUserDetails(userId) async {
     DocumentSnapshot doc = await userRef.doc(userId).get();
@@ -216,43 +178,6 @@ class _PrescriptiontileState extends State<Prescriptiontile> {
                 imageProvider: NetworkImage("${prescription.prescriptionUrl}"),
               ),
             ),
-//            Container(
-//              height: 200.0,
-//              width: MediaQuery.of(context).size.width * 0.8,
-//              child: Center(
-//                child: AspectRatio(
-//                  aspectRatio: 16 / 9,
-//                  child: Container(
-//                    decoration: BoxDecoration(
-//                      image: DecorationImage(
-//                        fit: BoxFit.cover,
-//                        image: NetworkImage("${prescription.prescriptionUrl}"),
-//                      ),
-//                    ),
-////                    child: Center(
-////                      child: PinchZoomImage(
-////                        image: Image.network('${prescription.prescriptionUrl}'),
-////                        zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
-////                        onZoomStart: () {
-////                          print('Zoom started');
-////                        },
-////                        onZoomEnd: () {
-////                          print('Zoom finished');
-////                        },
-////
-////                      ),
-////                    ),
-//                  ),
-//                ),
-//              ),
-//            ),
-//            Padding(
-//              padding: EdgeInsets.all(10.0),
-//              child: Container(
-//                height: 200,
-//                child: CachedNetworkImage(imageUrl:"${prescription.prescriptionUrl}" ),
-//              ),
-//            ),
             prescription.isLocked
                 ? Padding(
                     padding: const EdgeInsets.all(5.0),

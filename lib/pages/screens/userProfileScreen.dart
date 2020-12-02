@@ -62,12 +62,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 }),
             SimpleDialogOption(
                 child: Text(
-                  "Add your Licences",
+                  "Add your Insurance",
                   style: TextStyle(fontFamily: primaryFontFamily),
                 ),
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Addlicences()));
+                      MaterialPageRoute(builder: (context) => AddInsurance()));
                 }),
             SimpleDialogOption(
               child: Text(

@@ -81,7 +81,10 @@ class _UserResultState extends State<UserResult> {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: CircleAvatar(),
+        leading: CircleAvatar(
+          child: Icon(AntDesign.user),
+          backgroundColor: primaryColor3,
+        ),
         title: Text(
           "${user.firstName} ${user.lastName}",
           style: defaultStyle(),

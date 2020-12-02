@@ -11,11 +11,7 @@ class Start extends StatelessWidget {
   validateToken(context) async {
     final storage = new FlutterSecureStorage();
     sharedPreferences = await SharedPreferences.getInstance();
-    // bool isAdmin=sharedPreferences.getBool("isAdmin");
-    // bool isPharmacist=sharedPreferences.getBool("isPharmacist");
-
-    //   print("isAdmin---------- $isAdmin");
-    // print("isPharmacist---------- $isPharmacist");
+  
 
     String role = sharedPreferences.getString("role");
     String value = await storage.read(key: 'token');

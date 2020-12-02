@@ -3,6 +3,7 @@ import 'package:my_xpresspill/widgets/drawer.dart';
 import 'package:my_xpresspill/widgets/homeScreenCart.dart';
 import 'package:my_xpresspill/widgets/userAppBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 
 class UserHomeScreen extends StatefulWidget {
   @override
@@ -10,18 +11,16 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
-
   String _name;
   // String _email;
   // String _contactNumber;
 
-  _getUserDetails()async
-  {
-    SharedPreferences preferences=await SharedPreferences.getInstance();
+  _getUserDetails() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      _name=preferences.getString("userFirstName");
+      _name = preferences.getString("userFirstName");
 
-          // +" "+preferences.getString("userLastName");
+      // +" "+preferences.getString("userLastName");
       // _email=preferences.getString("userEmail");
       // _contactNumber=preferences.getString("userContactNumber");
     });
@@ -36,56 +35,47 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     appBar: TopBar(title: _name,),
+      appBar: TopBar(
+        title: _name,
+      ),
       body: GridView.count(
         crossAxisCount: 2,
         children: [
-
           homeScreenCard(
               context: context,
               imgSrc: "assets/images/icon5.svg",
               cardText: "Transfer your refills",
               color: Colors.white,
-
-              onTap: ()
-              {
-                Navigator.of(context).pushNamed('/transferprescription');
-              }
-
-          ),
+              onTap: () {
+                Get.toNamed('/transferprescription');
+                // Navigator.of(context).pushNamed('/transferprescription');
+              }),
           homeScreenCard(
               context: context,
               imgSrc: "assets/images/icon4.svg",
               cardText: "Upload a prescription",
               color: Colors.white,
-              onTap: ()
-              {
-                Navigator.of(context).pushNamed('/addprescription');
-              }
-
-          ),
+              onTap: () {
+                Get.toNamed('/addprescription');
+                // Navigator.of(context).pushNamed('/addprescription');
+              }),
           homeScreenCard(
               context: context,
               imgSrc: "assets/images/icon6.svg",
               cardText: "Talk to a doctor",
               color: Colors.white,
-              onTap: ()
-              {
+              onTap: () {
                 print("talk to doctor");
-              }
-
-          ),
+              }),
           homeScreenCard(
               context: context,
               imgSrc: "assets/images/icon3.svg",
               cardText: "E-commerce",
               color: Colors.white,
-              onTap: ()
-              {
-                Navigator.of(context).pushNamed('/ecommerce');
-              }
-          ),
-
+              onTap: () {
+                Get.toNamed('/ecommerce');
+                //Navigator.of(context).pushNamed('/ecommerce');
+              }),
         ],
       ),
       // floatingActionButton: FloatingActionButton(
@@ -99,4 +89,3 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 }
-

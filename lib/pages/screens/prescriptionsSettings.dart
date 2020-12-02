@@ -4,10 +4,9 @@ import 'package:my_xpresspill/constants.dart';
 import 'package:my_xpresspill/widgets/drawer.dart';
 import "package:my_xpresspill/pages/screens/userorders.dart";
 
-TextStyle defaultStyle()
-{
+TextStyle defaultStyle() {
   return TextStyle(
-      fontFamily: primaryFontFamily,
+    fontFamily: primaryFontFamily,
   );
 }
 
@@ -17,18 +16,20 @@ class PrescriptionsSettings extends StatefulWidget {
 }
 
 class _PrescriptionsSettingsState extends State<PrescriptionsSettings> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings",style: defaultStyle(),),
+        title: Text(
+          "Settings",
+          style: defaultStyle(),
+        ),
         centerTitle: true,
         backgroundColor: primaryColor,
       ),
       body: Container(
-        child:ListView(
-          children: [
+          child: ListView(
+        children: [
 //            Container(
 //              height: 200,
 ////              child: PinchZoomImage(
@@ -46,32 +47,38 @@ class _PrescriptionsSettingsState extends State<PrescriptionsSettings> {
 //            ),
           ListTile(
             leading: Icon(AntDesign.bars),
-            title: Text("My Prescriptions",style: defaultStyle(),),
-            onTap: (){
+            title: Text(
+              "My Prescriptions",
+              style: defaultStyle(),
+            ),
+            onTap: () {
               Navigator.of(context).pushNamed('/myprescriptions');
             },
           ),
-            ListTile(
-              leading: Icon(AntDesign.bars),
-              title: Text("My Requests",style: defaultStyle(),),
-              onTap: (){
-                Navigator.of(context).pushNamed('/lockedrequests');
-              },
+          ListTile(
+            leading: Icon(AntDesign.bars),
+            title: Text(
+              "My Requests",
+              style: defaultStyle(),
             ),
+            onTap: () {
+              Navigator.of(context).pushNamed('/lockedrequests');
+            },
+          ),
 
-            ListTile(
-              leading: Icon(Icons.shopping_cart),
-              title: Text("Product Orders",style: defaultStyle(),),
-              onTap: (){
-                Navigator.push(context,MaterialPageRoute(builder:(context)=>Productorders()));
-              },
+          ListTile(
+            leading: Icon(Icons.shopping_cart),
+            title: Text(
+              "Product Orders",
+              style: defaultStyle(),
             ),
-
-
-          ],
-        )
-      ),
-      drawer:  MyDrawer(),
+            onTap: () {
+              // Navigator.push(context,MaterialPageRoute(builder:(context)=>Productorders()));
+            },
+          ),
+        ],
+      )),
+      drawer: MyDrawer(),
     );
   }
 }

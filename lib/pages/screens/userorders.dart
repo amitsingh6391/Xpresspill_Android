@@ -7,11 +7,12 @@ import 'package:my_xpresspill/constants.dart';
 import 'package:my_xpresspill/services/userService.dart';
 import 'package:my_xpresspill/widgets/drawer.dart';
 
-import 'package:my_xpresspill/widgets/defaultTextStyleTheme.dart';
-
 import 'package:flutter_svg/svg.dart';
 
 class Productorders extends StatefulWidget {
+  String userid;
+  Productorders({@required this.userid});
+
   @override
   _ProductordersState createState() => _ProductordersState();
 }
@@ -26,6 +27,7 @@ class _ProductordersState extends State<Productorders> {
     var products = FirebaseFirestore.instance
         .collection("ProductOrders")
         .where("isSubmit", isEqualTo: true)
+        .where("userid", isEqualTo: widget.userid)
         .snapshots();
     setState(() {
       allProducts = products;

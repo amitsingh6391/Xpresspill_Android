@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_xpresspill/services/userService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MyDrawer extends StatefulWidget {
   @override
@@ -45,16 +46,21 @@ class _MyDrawerState extends State<MyDrawer> {
       child: ListView(
         children: [
           DrawerHeader(
+
+
             child: Center(
                 child: Column(children: [
-              Image(
-                  image: AssetImage("assets/images/appicon.png"),
-                  height: 100,
-                  width: size.width * 1),
-              Text("Easiest Way To Manage Your Medications",
-                  style: TextStyle(color: primaryColor)),
+              // Image(
+              //     image: AssetImage("assets/images/appicon.png"),
+              //     height: 100,
+              //     width: size.width * 1),
+               SvgPicture.asset('assets/images/7.svg', height: 135.0),
+              // Text("Easiest Way To Manage Your Medications",
+              //     style: TextStyle(color:white)),
             ])),
-            decoration: BoxDecoration(),
+            decoration: BoxDecoration(
+              color:primaryColor
+            ),
           ),
           ListTile(
             title: Text(

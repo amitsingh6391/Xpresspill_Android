@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:my_xpresspill/constants.dart';
 
 import "package:my_xpresspill/pages/home.dart";
-import "package:my_xpresspill/constants.dart";
 
 import "package:my_xpresspill/pages/screens/ecommerceScreen.dart";
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,7 +10,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class UserCartScreen extends StatefulWidget {
   String currentuserid;
@@ -118,6 +117,8 @@ class _UserCartScreenState extends State<UserCartScreen> {
 
   onordersubmit() async {
     //this function will be invoked when user want to submit item whatever in cart..
+    var updateproduct =
+        await FirebaseFirestore.instance.collection("products").get();
 
     await FirebaseFirestore.instance
         .collection("cart")
@@ -126,7 +127,21 @@ class _UserCartScreenState extends State<UserCartScreen> {
         .get()
         .then((snapshot) {
       for (DocumentSnapshot ds in snapshot.docs) {
-        ds.reference.delete();
+        updateproduct.docs.forEach((element) {
+          if (element.id.contains(ds.id)) {
+            FirebaseFirestore.instance
+                .collection("products")
+                .doc(element.id)
+                .update({
+              "productQuantity":
+                  (int.tryParse(element.data()["productQuantity"]) -
+                          ds.data()["itemQuantity"])
+                      .toString()
+            }).then((value) {
+              ds.reference.delete();
+            });
+          }
+        });
       }
     });
 
@@ -162,19 +177,23 @@ class _UserCartScreenState extends State<UserCartScreen> {
           centerTitle: true,
         ),
         bottomNavigationBar: BottomAppBar(
+          elevation: 10,
           shape: CircularNotchedRectangle(),
           child: Container(
-              color: primaryColor,
+              // color: primaryColor,
               height: 75,
               child: itemnumber == 0 || itemnumber == null
                   ? Text("")
                   : Row(
                       mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text(
-                          "Submit",
-                          style: TextStyle(color: Colors.white, fontSize: 30),
+                        Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Text(
+                            "Submit",
+                            style: TextStyle(color: Colors.black, fontSize: 20),
+                          ),
                         ),
                         GestureDetector(
                           onTap: () async {
@@ -194,8 +213,8 @@ class _UserCartScreenState extends State<UserCartScreen> {
                                 MaterialPageRoute(
                                     builder: (context) => EcommerceScreen()));
                           },
-                          child: Icon(Icons.arrow_forward,
-                              size: 70, color: Colors.white),
+                          child: Icon(AntDesign.forward,
+                              size: 50, color: Colors.black),
                         )
                       ],
                     )),
@@ -258,9 +277,6 @@ class _UserCartScreenState extends State<UserCartScreen> {
                                   fontSize: 20.0, fontWeight: FontWeight.bold),
                             ),
                             onPressed: () async {
-                              // SharedPreferences sharedPreferences =
-                              //     await SharedPreferences.getInstance();
-                              //sharedPreferences.setInt("cartno", 0);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -272,15 +288,15 @@ class _UserCartScreenState extends State<UserCartScreen> {
                       ),
                     ]);
                   } else {
-                    return GridView.builder(
+                    return ListView.builder(
                         reverse: true,
                         physics: NeverScrollableScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: 6),
                         itemCount: snapshot.data.documents.length,
                         shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount:
-                                (orientation == Orientation.portrait) ? 2 : 3),
+                        // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        //     crossAxisCount:
+                        //         (orientation == Orientation.portrait) ? 2 : 3),
                         itemBuilder: (context, index) {
                           return Card(
                             child: Container(
@@ -290,134 +306,145 @@ class _UserCartScreenState extends State<UserCartScreen> {
                                   Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Container(
-                                          height: size.height * 0.12,
-                                          width: size.width * 0.3,
+                                          height: size.height * 0.17,
+                                          width: size.width * 0.4,
                                           child: Image(
                                               image: NetworkImage(snapshot
                                                   .data.documents[index]
                                                   .data()["itemUrl"]),
                                               fit: BoxFit.fill))),
-                                  Column(children: [
-                                    GestureDetector(
-                                        onTap: () {
-                                          if (snapshot.data.documents[index]
-                                                  .data()["itemQuantity"] <
-                                              int.parse(snapshot
-                                                  .data.documents[index]
-                                                  .data()["maxqty"])) {
-                                            var previousquant = snapshot
-                                                .data.documents[index]
-                                                .data()["itemQuantity"];
-                                            var productid = snapshot
-                                                .data.documents[index]
-                                                .data()["productid"];
-
-                                            print(previousquant + 1);
-                                            print(productid);
-
-                                            var newquant = previousquant + 1;
-                                            productid = productid;
-
-                                            quantityupdate(newquant, productid);
-                                          } else {
-                                            Fluttertoast.showToast(
-                                              msg:
-                                                  "max product quantity limit reached",
-                                              fontSize: 15,
-                                              backgroundColor: Colors.black,
-                                              toastLength: Toast.LENGTH_LONG,
-                                              textColor: Colors.white,
-                                            );
-                                          }
-
-                                          // var previousquant = snapshot
-                                          //     .data.documents[index]
-                                          //     .data()["itemQuantity"];
-                                          // var productid = snapshot
-                                          //     .data.documents[index]
-                                          //     .data()["productid"];
-
-                                          // print(previousquant + 1);
-                                          // print(productid);
-
-                                          // var newquant = previousquant + 1;
-                                          // productid = productid;
-
-                                          // quantityupdate(newquant, productid);
-                                        },
-                                        child: CircleAvatar(
-                                            radius: 15,
-                                            backgroundColor: primaryColor,
-                                            child: Icon(Icons.add,
-                                                color: Colors.white))),
-                                    SizedBox(height: 10),
-                                    GestureDetector(
-                                        onTap: () {
-                                          var previousquant =
-                                              snapshot //firsty we check that is it any
-                                                  .data
-                                                  .documents[
-                                                      index] //any item in cart or not
-                                                  .data()["itemQuantity"];
-                                          var productid =
-                                              snapshot //then we fetch productid for that item
-                                                  .data
-                                                  .documents[index]
-                                                  .data()["productid"];
-
-                                          print(previousquant - 1);
-                                          print(productid);
-
-                                          var newquant;
-                                          if (previousquant > 1) {
-                                            newquant = previousquant - 1;
-                                          } else {
-                                            //newquant = 0;
-                                            removeitemfromcart(productid);
-                                          }
-
-                                          productid = productid;
-
-                                          quantityupdate(newquant, productid);
-                                        },
-                                        child: CircleAvatar(
-                                            radius: 15,
-                                            backgroundColor: primaryColor,
-                                            child: Text("-",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 40)))),
-                                    SizedBox(height: 10),
-                                    GestureDetector(
-                                        onTap: () {
-                                          removeitemfromcart(snapshot
-                                              .data.documents[index]
-                                              .data()["productid"]);
-                                        },
-                                        child: CircleAvatar(
-                                            radius: 15,
-                                            backgroundColor: primaryColor,
-                                            child: Icon(
-                                              Icons.delete,
-                                              color: Colors.white,
-                                            )))
-                                  ])
-                                ]),
-                                SizedBox(width: 10),
-                                Column(children: [
-                                  Text(
-                                    snapshot.data.documents[index]
-                                        .data()["itemname"],
-                                    style: defaultStyle(),
-                                  ),
-                                  Text(
-                                    "Price :${snapshot.data.documents[index].data()["itemprice"]}\$",
-                                    style: defaultStyle(),
-                                  ),
-                                  Text(
-                                    "Quantity :${snapshot.data.documents[index].data()["itemQuantity"]}",
-                                    style: defaultStyle(),
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
+                                              child: Text(
+                                                snapshot.data.documents[index]
+                                                    .data()["itemname"],
+                                                style: defaultStyle(),
+                                              ),
+                                            ),
+                                            // Expanded(child: Container()),
+                                            // Icon(Icons.home)
+                                          ]),
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Text(
+                                              "Price :${snapshot.data.documents[index].data()["itemprice"]}\$",
+                                              style: defaultStyle(),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Text(
+                                              "Quantity :${snapshot.data.documents[index].data()["itemQuantity"]}",
+                                              style: defaultStyle(),
+                                            ),
+                                          ),
+                                        ]),
                                   )
+                                ]),
+                                SizedBox(width: 10, height: 10),
+                                Column(children: [
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        GestureDetector(
+                                            onTap: () {
+                                              if (snapshot.data.documents[index]
+                                                      .data()["itemQuantity"] <
+                                                  int.parse(snapshot
+                                                      .data.documents[index]
+                                                      .data()["maxqty"])) {
+                                                var previousquant = snapshot
+                                                    .data.documents[index]
+                                                    .data()["itemQuantity"];
+                                                var productid = snapshot
+                                                    .data.documents[index]
+                                                    .data()["productid"];
+
+                                                print(previousquant + 1);
+                                                print(productid);
+
+                                                var newquant =
+                                                    previousquant + 1;
+                                                productid = productid;
+
+                                                quantityupdate(
+                                                    newquant, productid);
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "max product quantity limit reached",
+                                                  fontSize: 15,
+                                                  backgroundColor: Colors.black,
+                                                  toastLength:
+                                                      Toast.LENGTH_LONG,
+                                                  textColor: Colors.white,
+                                                );
+                                              }
+                                            },
+                                            child: CircleAvatar(
+                                                radius: 15,
+                                                backgroundColor: primaryColor,
+                                                child: Icon(Icons.add,
+                                                    color: Colors.white))),
+                                        GestureDetector(
+                                            onTap: () {
+                                              var previousquant =
+                                                  snapshot //firsty we check that is it any
+                                                      .data
+                                                      .documents[
+                                                          index] //any item in cart or not
+                                                      .data()["itemQuantity"];
+                                              var productid =
+                                                  snapshot //then we fetch productid for that item
+                                                      .data
+                                                      .documents[index]
+                                                      .data()["productid"];
+
+                                              print(previousquant - 1);
+                                              print(productid);
+
+                                              var newquant;
+                                              if (previousquant > 1) {
+                                                newquant = previousquant - 1;
+                                              } else {
+                                                //newquant = 0;
+                                                removeitemfromcart(productid);
+                                              }
+
+                                              productid = productid;
+
+                                              quantityupdate(
+                                                  newquant, productid);
+                                            },
+                                            child: CircleAvatar(
+                                                radius: 15,
+                                                backgroundColor: primaryColor,
+                                                child: Icon(AntDesign.minus,
+                                                    color: Colors.white))),
+                                        GestureDetector(
+                                            onTap: () {
+                                              removeitemfromcart(snapshot
+                                                  .data.documents[index]
+                                                  .data()["productid"]);
+                                            },
+                                            child: CircleAvatar(
+                                                radius: 15,
+                                                backgroundColor: primaryColor,
+                                                child: Icon(
+                                                  Icons.close,
+                                                  color: primaryColor2,
+                                                )))
+                                      ]),
+                                  SizedBox(height: 10),
                                 ]),
                               ])
                             ])),

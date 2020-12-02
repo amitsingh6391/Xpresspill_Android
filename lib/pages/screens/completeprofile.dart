@@ -240,17 +240,17 @@ class _AddhealthcardState extends State<Addhealthcard> {
   }
 }
 
-class Addlicences extends StatefulWidget {
+class AddInsurance extends StatefulWidget {
   @override
-  _AddlicencesState createState() => _AddlicencesState();
+  _AddInsuranceState createState() => _AddInsuranceState();
 }
 
-class _AddlicencesState extends State<Addlicences> {
+class _AddInsuranceState extends State<AddInsurance> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String errorMsg = "";
   File file;
   bool isUploading = false;
-  String licences = Uuid().v4();
+  String Insurance = Uuid().v4();
   SharedPreferences sharedPreferences;
 
   @override
@@ -284,7 +284,7 @@ class _AddlicencesState extends State<Addlicences> {
       builder: (context) {
         return SimpleDialog(
           title: Text(
-            "Add Your Licences Card",
+            "Add Your Insurance ",
             style: TextStyle(fontFamily: primaryFontFamily),
           ),
           children: <Widget>[
@@ -317,7 +317,7 @@ class _AddlicencesState extends State<Addlicences> {
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
     Im.Image imageFile = Im.decodeImage(file.readAsBytesSync());
-    final compressedImageFile = File('$path/img_$licences.jpg')
+    final compressedImageFile = File('$path/img_$Insurance.jpg')
       ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 85));
     setState(() {
       file = compressedImageFile;
@@ -326,7 +326,7 @@ class _AddlicencesState extends State<Addlicences> {
 
   Future<String> uploadImage(imageFile) async {
     StorageUploadTask uploadTask = storageRef
-        .child("Licencescard/Licencescard_$licences.jpg")
+        .child("Insurance/Insurance_$Insurance.jpg")
         .putFile(imageFile);
     StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
     String downloadUrl = await storageSnap.ref.getDownloadURL();
@@ -335,7 +335,7 @@ class _AddlicencesState extends State<Addlicences> {
 
   updateInFirestore({String mediaUrl, String userId}) {
     FirebaseFirestore.instance.collection("users").doc(userId).update({
-      "Licencescard": mediaUrl,
+      "Insurance": mediaUrl,
     });
   }
 
@@ -357,7 +357,7 @@ class _AddlicencesState extends State<Addlicences> {
     setState(() {
       file = null;
       isUploading = false;
-      licences = Uuid().v4();
+      Insurance = Uuid().v4();
     });
   }
 
@@ -375,7 +375,7 @@ class _AddlicencesState extends State<Addlicences> {
             icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: clearImage),
         title: Text(
-          "Add Your Licences Card",
+          "Add Your Insurance Card",
           style: TextStyle(color: Colors.black, fontFamily: primaryFontFamily),
         ),
         actions: [
@@ -435,7 +435,7 @@ class _AddlicencesState extends State<Addlicences> {
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                     child: Text(
-                      "Add Your Licences Card",
+                      "Add Your Insurance ",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 22.0,
@@ -449,7 +449,7 @@ class _AddlicencesState extends State<Addlicences> {
             Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: Text(
-                "Note : Please upload a clear image of your Licencescard",
+                "Note : Please upload a clear image of your Insurance",
                 style: TextStyle(
                     fontFamily: primaryFontFamily,
                     fontSize: 15.0,

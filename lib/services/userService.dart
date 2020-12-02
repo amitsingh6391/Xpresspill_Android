@@ -93,7 +93,7 @@ class UserService {
       sharedPreferences.setString(
           "userContactNumber", currentUserDetails.contactNumber);
       sharedPreferences.setString("role", currentUserDetails.role);
-     
+
       createAndStoreJWTToken(uid);
 
       statusCode =
@@ -110,13 +110,8 @@ class UserService {
     return uid;
   }
 
-  Future<void> resetpassword() async {
-    ///this function will be invoked when user wants to reset his password
-    // print(mymail);
-    sharedPreferences = await SharedPreferences.getInstance();
-    String mymail = sharedPreferences.getString("userEmail");
-    print(mymail);
-    await _auth.sendPasswordResetEmail(email: mymail);
+  Future<void> resetpassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
   }
 
   Future<void> signup(userValues) async {
@@ -142,8 +137,8 @@ class UserService {
           'dob': userValues['dob'],
           'createdAt': DateTime.now(),
           'role': 'user',
-          "Healthcard":"",
-          "Licencescard":""
+          "Healthcard": "",
+          "Insurance": ""
           // 'isAdmin': false,
           // 'isPharmacist': false
         });
@@ -216,14 +211,3 @@ class UserService {
     return user.email;
   }
 }
-
-// name = name[0].toUpperCase() + name.substring(1); //not to that.
-// return name;
-
-//}
-// Future<String> userEmail() async {//
-//   User user = FirebaseAuth.instance.currentUser;
-//   // var user = await _auth.currentUser();
-//   return user.email;
-// }
-//}

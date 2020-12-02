@@ -7,8 +7,7 @@ class MyUser {
   final String email;
   final String contactNumber;
   final String dob;
-  // final bool isAdmin;
-  // final bool isPharmacist;
+
   final String role;
 
   MyUser({
@@ -18,8 +17,7 @@ class MyUser {
     this.email,
     this.contactNumber,
     this.dob,
-    // this.isAdmin,
-    // this.isPharmacist,
+   
     this.role,
   });
 
@@ -31,8 +29,7 @@ class MyUser {
         email: doc['email'],
         contactNumber: doc['contactNumber'],
         dob: doc['dob'],
-        // isAdmin: doc['isAdmin'],
-        // isPharmacist: doc['isPharmacist'],
+     
         role: doc['role']
         // healthcard: doc["healthcard"]
         );
